@@ -4,7 +4,6 @@ import os
 import sqlite3
 import random
 
-
 app = Flask(__name__)
 app.secret_key = "testkey"   # needed for session
 
@@ -22,7 +21,6 @@ def get_transactions(acc_no):
     rows = cur.fetchall()
     conn.close()
     return rows
-
 
 # ============================
 # ROUTES
@@ -71,7 +69,6 @@ def login():
             return redirect(url_for("dashboard"))
         else:
             error = "Invalid account number or password."
-
     return render_template("login.html", error=error)
 
 # -----------------------------
