@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - My Bank Chatbot</title>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Home CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="nav-left">
+            <i class="fa-solid fa-building-columns bank-icon"></i>
+            <h2>My Bank Chatbot</h2>
+        </div>
+        
+        <div class="nav-right">
+            <div class="profile" onclick="window.location.href='/profile'">
+                <i class="fa-solid fa-address-card"></i>
+                <h3>Profile</h3>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <section class="dashboard" id="dashboard-content">
+        <h1 id="welcomeText"></h1>
+        <p>Your smart banking assistant is here to help you.</p>
+
+        <!-- CHAT BUTTON -->
+        <button class="chat-btn" id="startChatBtn">
+            <i class="fas fa-comments"></i> Start Chatting Now
+        </button>
+
+        <div class="card-container">
+            <div class="card">
+                <i class="fa-solid fa-wallet"></i>
+                <h3>Balance Inquiry</h3>
+                <p>View your latest account balance instantly</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-credit-card"></i>
+                <h3>Card Management</h3>
+                <p>Manage debit/credit cards and update card settings</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <h3>Transaction History</h3>
+                <p>Track past transactions and view statements</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-hand-holding-dollar"></i>
+                <h3>Loan Eligibility</h3>
+                <p>Check eligibility for different loan services</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-location-dot"></i>
+                <h3>Branch Locator</h3>
+                <p>Find nearby bank branches and ATM locations</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-shield-virus"></i>
+                <h3>Secure Banking</h3>
+                <p>Enhanced security with secure transfer and login</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-clock"></i>
+                <h3>24/7 Availability</h3>
+                <p>Access banking services anytime, anywhere</p>
+            </div>
+        </div>
+
+        <div class="full-width-section card">
+            <div class="left-section">
+                <div class="left-top">
+                    <h1>Banking Made Simple with AI</h1>
+                    <p>Our advanced AI chatbot leverages natural language processing to understand your queries and provide personalized banking assistance.</p>
+                </div>
+
+                <div class="left-bottom">
+                    <div class="feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Bank-Grade Security</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-bolt"></i>
+                        <span>Instant Responses</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-comment"></i>
+                        <span>Natural Conversations</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-section">
+                <div class="right-subsection">
+                    <h2>24/7</h2>
+                    <p>Always Available</p>
+                </div>
+                <div class="right-subsection">
+                    <h2>99.9%</h2>
+                    <p>Accuracy Rate</p>
+                </div>
+                <div class="right-subsection">
+                    <h2>&lt;2s</h2>
+                    <p>Response Time</p>
+                </div>
+                <div class="right-subsection">
+                    <h2>100%</h2>
+                    <p>Secure</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHAT POPUP MODAL -->
+    <div id="chat-overlay" class="overlay">
+        <div class="chat-box">
+            <button id="closeChat" class="close-btn">✖</button>
+            <iframe src="/chatbot" class="chat-frame"></iframe>
+        </div>
+    </div>
+
+    <!-- CHAT POPUP MODAL -->
+    <div id="chat-overlay" class="overlay">
+        <div class="chat-box">
+            <button id="closeChat" class="close-btn">✖</button>
+            <iframe src="/chatbot" class="chat-frame"></iframe>
+        </div>
+    </div>
+
+    <!-- Blur Overlay -->
+    <div id="overlay" class="overlay"></div>
+
+
+    <!-- JS -->
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+
+    <script>
+        document.getElementById("welcomeText").textContent = "Welcome {{ username }}";
+
+        function handleLogout() {
+            localStorage.removeItem("accountName");
+            window.location.href = "/";
+        }
+    </script>
+
+</body>
+</html>

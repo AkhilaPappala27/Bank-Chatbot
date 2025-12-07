@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bank Chatbot - Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+    <div class="container">
+        <form class="card login-card" method="POST" action="{{ url_for('login') }}">
+            <h2>My Bank Chatbot</h2>
+            <p class="subtitle">Login to access your account</p>
+
+            <!-- Display error message if login failed -->
+            {% if error %}
+            <p class="error-msg">{{ error }}</p>
+            {% endif %}
+
+            <label>Account Number or Phone Number</label>
+            <input type="text" name="account" placeholder="Enter account number" required>
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter password" required>
+
+            <a class="forgot" href="#">Forgot Password?</a>
+
+            <button class="btn" type="submit">Login</button>
+
+            <p class="switch">Don't have an account? 
+                <a href="{{ url_for('signup') }}">Sign Up</a>
+            </p>
+        </form>
+    </div>
+
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>

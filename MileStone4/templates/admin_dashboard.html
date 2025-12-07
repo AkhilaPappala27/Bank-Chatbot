@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_dashboard.css') }}">
+</head>
+
+<body>
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="top-nav">
+        <div class="logo">BankBot Admin</div>
+
+        <ul class="nav-links">
+            <li class="nav-item active" data-page="dashboard">Dashboard</li>
+            <li class="nav-item" data-page="training">Training Data</li>
+            <li class="nav-item" data-page="queries">User Queries</li>
+            <li class="nav-item" data-page="faqs">FAQs</li>
+            <li class="nav-item" data-page="analytics">Analytics</li>
+            <li class="nav-item" data-page="settings">Settings</li>
+        </ul>
+
+        <button onclick="window.location='/login'" class="logout-btn">Logout</button>
+    </nav>
+
+    <!-- PAGE CONTENT AREA -->
+    <div class="content">
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="page-section active">
+
+            <h2>Dashboard</h2>
+            <p class="subtitle">Overview of your chatbot performance</p>
+
+            <!-- ======= STAT CARDS ======= -->
+            <div class="stats-container">
+
+                <div class="stat-card fade-in">
+                    <div class="card-header">
+                        <i class="fa-solid fa-database card-icon" style="color:#0b71d9;"></i>
+                        <p class="stat-title">Total Queries</p>
+                    </div>
+                <h3 class="stat-value" id="totalQueries" style="color:#0b71d9;">{{ total_queries }}</h3>
+                </div>
+
+                <div class="stat-card fade-in">
+                    <div class="card-header">
+                        <i class="fa-solid fa-chart-line card-icon" style="color:#0abf3a;"></i>
+                        <p class="stat-title">Success Rate</p>
+                    </div>
+                    <h3 class="stat-value success" id="successRate">{{ success_rate }}%</h3>
+                </div>
+
+                <div class="stat-card fade-in">
+                    <div class="card-header">
+                        <i class="fa-solid fa-bullseye card-icon" style="color:#8a3ffc;"></i>
+                        <p class="stat-title">Total Intents</p>
+                    </div>
+                    <h3 class="stat-value purple" id="totalIntents">{{ total_intents }}</h3>
+                </div>
+
+                <div class="stat-card fade-in">
+                    <div class="card-header">
+                        <i class="fa-solid fa-tags card-icon" style="color:#ff7b00;"></i>
+                        <p class="stat-title">Entity Types</p>
+                    </div>
+                    <h3 class="stat-value orange" id="entityTypes">{{ entity_types }}</h3>
+                </div>
+
+            </div>
+
+            <!-- ======= RECENT QUERIES TABLE ======= -->
+            <div class="recent-queries">
+                <h3>Recent User Queries</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Query</th>
+                            <th>Intent</th>
+                            <th>Confidence</th>
+                            <th>Date & Time</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for q, intent, conf, time in recent_queries %}
+                        <tr>
+                            <td>{{ q }}</td>
+                            <td><span class="intent-tag">{{ intent }}</span></td>
+
+                            <td>
+                                {% if conf >= 0.8 %}
+                                    <span class="conf high">High ({{ (conf * 100) | round(0) }}%)</span>
+                                {% else %}
+                                    <span class="conf medium">Medium ({{ (conf * 100) | round(0) }}%)</span>
+                                {% endif %}
+                            </td>
+
+                            <td>{{ time }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+        </section>
+
+        <!-- ================= TRAINING DATA SECTION ================= -->
+        <section id="training" class="page-section">
+
+            <!-- Header Area -->
+            <div class="training-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h2 style="margin-top:25px; margin-bottom:5px; font-size:28px;">Training Data</h2>
+                    <p class="subtitle" style="margin-top:25px; margin-bottom:15px; color:#64748b;">Manage training samples and retrain the model</p>
+                </div>
+
+                <div style="display:flex; gap:12px;">
+                    <button class="btn primary" onclick="openAddModal()">＋ Add Data</button>
+                    <button class="btn secondary" id="trainBtn" onclick="startTraining()">
+                        ▶ Train Model (<span id="pendingCount">0</span> pending)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Training Table Card -->
+            <div class="training-card"
+         style="margin-top:20px; background:white; padding:22px; border-radius:12px;
+                box-shadow:0 8px 30px rgba(13,38,76,0.06);">
+
+                <h3 style="margin:0 0 16px 0; color:#0f172a;">Training Data Queue</h3>
+
+                <div class="table-wrap">
+                    <table class="training-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="color:#64748b; font-size:14px;">
+                            <th style="padding:12px 8px;">Intent</th>
+                            <th>Examples</th>
+                            <th>Entities</th>
+                            <th>Status</th>
+                            <th>Added</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trainingTbody">
+                    <!-- JS will inject rows here -->
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- User Queries Section -->
+        <section id="queries" class="page-section">
+            <h2>User Queries</h2>
+            <p class="subtitle">Queries that couldn't be answered by the chatbot</p>
+            <!-- SUMMARY CARDS -->
+            <div class="uq-summary-container">
+
+            <div class="uq-card">
+                <div class="uq-icon fallback-icon"><i class="fa-solid fa-rotate-right"></i></div>
+                <div class="uq-number" id="fallbackCount">0</div>
+                <div class="uq-label">Fallback Queries</div>
+            </div>
+
+            <div class="uq-card">
+                <div class="uq-icon low-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="uq-number" id="lowCount">0</div>
+                <div class="uq-label">Low Confidence</div>
+            </div>
+
+            <div class="uq-card">
+                <div class="uq-icon irre-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+                <div class="uq-number" id="irrelevantCount">0</div>
+                <div class="uq-label">Irrelevant Queries</div>
+            </div>
+
+            <div class="uq-total">
+                <i class="fa-solid fa-exclamation-triangle"></i>
+                <span id="totalUnresolved">0</span> Unresolved
+            </div>
+            </div>
+
+            <div class="userqueries-card">
+                <h3>Unanswered Queries</h3>
+
+                <div class="uq-table-wrap">
+                    <table class="uq-table">
+                        <thead>
+                            <tr>
+                                <th>Query</th>
+                                <th>Detected Intent</th>
+                                <th>Confidence</th>
+                                <th>Reason</th>
+                                <th>Date & Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="userQueriesTbody">
+                            <!-- JS will inject rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- FAQs Section -->
+        <section id="faqs" class="page-section">
+            <div class="faq-header"style="display:flex; justify-content:space-between; align-items:center;" >
+                <h2>FAQs</h2>
+                <button class="btn faq-primary" onclick="openFaqModal()">+ Add FAQ</button>
+            </div>
+
+            <p class="subtitle">Manage the knowledge base used by the chatbot.</p>
+
+            <!-- FAQ CONTAINER (scroll only inside this, not the whole page) -->
+            <div class="faq-list-container">
+                <div id="faqList">
+                <!-- JS inserts FAQ cards here -->
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="page-section">
+            <div class="analytics-header" style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:10px;
+    ">
+                <h2>Analytics</h2>
+
+                <button class="export-btn" onclick="exportAnalyticsCSV()">
+                    <i class="fa-solid fa-file-export"></i> Export CSV
+                </button>
+            </div>
+
+            <p class="subtitle">Chatbot performance metrics and insights</p>
+
+            <!-- ======= TOP METRIC CARDS ======= -->
+            <div class="stats-container">
+
+                <!-- TOTAL CONVERSATIONS -->
+                <div class="stat-card fade-in">
+                    <div class="card-header">
+                        <i class="fa-solid fa-comments card-icon" style="color:#0b71d9;"></i>
+                        <p class="stat-title">Total Conversations</p>
+                    </div>
+                    <h3 class="stat-value" id="totalChats" style="color:#0b71d9;">0</h3>
+                </div>
+
+                <!-- AVG CONFIDENCE -->
+                <div class="stat-card fade-in">
+                    <div class="card-header">
+                        <i class="fa-solid fa-bullseye card-icon" style="color:#22c55e;"></i>
+                        <p class="stat-title">Avg Confidence</p>
+                    </div>
+                    <h3 class="stat-value success" id="avgConfidence">0%</h3>
+                </div>
+
+                <!-- AVG RESPONSE TIME -->
+                <div class="stat-card fade-in">
+                    <div class="card-header">
+                        <i class="fa-solid fa-bolt card-icon" style="color:#8a3ffc;"></i>
+                        <p class="stat-title">Avg Response Time</p>
+                    </div>
+                    <h3 class="stat-value purple" id="avgResponse">0.0s</h3>
+                </div>
+
+                <!-- USER SATISFACTION -->
+                <div class="stat-card fade-in">
+                    <div class="card-header">
+                    <i class="fa-solid fa-star card-icon" style="color:#ff7b00;"></i>
+                    <p class="stat-title">User Satisfaction</p>
+                </div>
+                <h3 class="stat-value orange" id="userRating">0/5</h3>
+            </div>
+
+            </div>
+            <!-- ================== GRAPHICAL ANALYTICS ================== -->
+            <h3 style="margin-top:25px;">Visual Insights</h3>
+            <div class="chart-row">
+                <!-- Intent Distribution -->
+                <div class="chart-card">
+                    <h4>Intent Distribution</h4>
+                    <canvas id="intentChart"></canvas>
+                </div>
+                <!-- Confidence Trend -->
+                <div class="chart-card">
+                    <h4>Confidence Trend</h4>
+                    <canvas id="confidenceChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-row">
+
+                <!-- Queries Over Time -->
+                <div class="chart-card">
+                    <h4>Daily Query Volume</h4>
+                    <canvas id="volumeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- ======= INTENT + ENTITY TABLES SIDE BY SIDE ======= -->
+            <div style="display:flex; gap:25px; margin-top:20px; flex-wrap:wrap;">
+
+                <!-- INTENT PERFORMANCE -->
+                <div class="training-card" style="flex:1; min-width:420px;">
+                    <h3 style="margin-bottom:12px;">Intent Performance</h3>
+
+                    <div class="table-wrap">
+                        <table class="training-table">
+                            <thead>
+                                <tr>
+                                    <th>Intent</th>
+                                    <th>Queries</th>
+                                    <th>Accuracy</th>
+                                </tr>
+                            </thead>
+                            <tbody id="intentPerformanceBody">
+                                <!-- JS Loads Dynamic Data -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ENTITY PERFORMANCE -->
+                <div class="training-card" style="flex:1; min-width:420px;">
+                    <h3 style="margin-bottom:12px;">Entity Recognition</h3>
+
+                    <div class="table-wrap">
+                        <table class="training-table">
+                            <thead>
+                                <tr>
+                                    <th>Entity</th>
+                                    <th>Detected</th>
+                                    <th>Accuracy</th>
+                                </tr>
+                            </thead>
+                            <tbody id="entityPerformanceBody">
+                                <!-- JS Loads Dynamic Data -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ======= TOP QUERIES LIST ======= -->
+            <div class="training-card" style="margin-top:25px;">
+                <h3>Top Queries</h3>
+
+                <div class="table-wrap">
+                    <table class="training-table">
+                        <tbody id="topQueriesBody">
+                            <!-- JS Loads Dynamic Data -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="page-section">
+            <h2>Settings</h2>
+            <p class="subtitle">Manage your preferences</p>
+
+            <!-- ================= PROFILE ================= -->
+            <div class="training-card" style="margin-top:20px;">
+                <h3><i class="fa-solid fa-user"></i> Profile</h3>
+
+                <label>Name</label>
+                <input id="profileName" value="{{admin_name}}"
+               style="width:100%; padding:10px; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:12px;">
+
+                <label>Email</label>
+                <input id="profileEmail" value="{{ admin_email}}"
+               style="width:100%; padding:10px; border-radius:8px; border:1px solid #e5e7eb; margin-bottom:12px;">
+
+                <button class=" settings-btn" onclick="saveProfile()">Save Profile</button>
+            </div>
+
+            <!-- ================= CHANGE PASSWORD ================= -->
+            <div class="training-card" style="margin-top:20px;">
+                <h3><i class="fa-solid fa-lock"></i> Change Password</h3>
+
+                <p style="color:#475569;">Reset your account password</p>
+
+                <button class=" settings-btn" onclick="resetPassword()">Reset Password</button>
+            </div>
+
+            <!-- ================= EMAIL NOTIFICATIONS ================= -->
+            <div class="training-card" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h3><i class="fa-solid fa-bell"></i> Email Notifications</h3>
+                    <p style="color:#64748b;">Receive daily reports via email</p>
+                </div>
+
+                <label class="switch">
+                    <input type="checkbox" id="emailNotifyToggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <!-- ================= DARK MODE ================= -->
+            <div class="training-card" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h3><i class="fa-solid fa-moon"></i> Dark Mode</h3>
+                    <p style="color:#64748b;">Switch to dark theme</p>
+                </div>
+
+                <label class="switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <!-- ================= EXPORT DATA ================= -->
+            <div class="training-card" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h3><i class="fa-solid fa-download"></i> Export Data</h3>
+                    <p style="color:#64748b;">Download all training data as CSV</p>
+                </div>
+
+                <button class="settings-btn" onclick="exportTrainingData()">Export</button>
+            </div>
+
+            <!-- ================= DANGER ZONE ================= -->
+            <div class="training-card" style="margin-top:20px; border:2px solid #fecaca; background:#fff5f5;">
+
+                <h3 style="color:#dc2626;">
+                <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
+                </h3>
+                <p style="color:#b91c1c;">Irreversible actions</p>
+
+                <button class="d-logout-btn" onclick="logoutAdmin()"
+            style="background:#dc2626; color:white; padding:10px 18px; border-radius:8px; margin-top:10px;">
+                    Logout
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script src="{{ url_for('static', filename='admin.js') }}"></script>
+
+    <!-- ADD DATA MODAL -->
+    <div id="addModal"
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45);
+            justify-content:center; align-items:center; z-index:500;">
+        <div style="width:520px; background:white; border-radius:12px; padding:22px;
+                box-shadow:0 20px 60px rgba(2,6,23,0.25); position:relative;">
+
+            <button onclick="closeAddModal()"
+                style="position:absolute; right:14px; top:12px; background:none; border:none;
+                       font-size:20px; cursor:pointer;">✖</button>
+
+            <h3 style="margin-bottom:14px;">Add New Training Data</h3>
+
+            <label>Intent Name</label>
+            <input id="modalIntent"
+               placeholder="e.g., investment_inquiry"
+               style="width:100%; padding:10px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;">
+
+            <label>Example Phrases (one per line)</label>
+            <textarea id="modalExamples" rows="5"
+                  style="width:100%; padding:10px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;"></textarea>
+
+            <label>Entities (comma separated)</label>
+            <input id="modalEntities"
+               placeholder="investment_type, amount"
+               style="width:100%; padding:10px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;">
+
+            <div style="text-align:right; margin-top:10px;">
+                <button onclick="closeAddModal()" class="btn" style="margin-right:8px;">Cancel</button>
+                <button onclick="submitAddModal()" class="btn primary">Add Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD FAQ MODAL -->
+    <div id="faqModal"
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45);
+            justify-content:center; align-items:center; z-index:600;">
+    
+        <div style="width:520px; background:white; border-radius:12px; padding:25px;
+                box-shadow:0 20px 60px rgba(2,6,23,0.25); position:relative;">
+
+            <!-- CLOSE BUTTON -->
+            <button onclick="closeFaqModal()"
+            style="position:absolute; right:14px; top:12px; background:none; border:none;
+                   font-size:20px; cursor:pointer;">✖</button>
+
+            <h3 style="margin-bottom:16px;">Add New FAQ</h3>
+
+            <!-- QUESTION -->
+            <label>Question</label>
+            <input id="faqQuestion"
+            placeholder="e.g., How do I reset my PIN?"
+            style="width:100%; padding:10px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;">
+
+            <!-- ANSWER -->
+            <label>Answer</label>
+            <textarea id="faqAnswer" rows="4"
+            placeholder="Enter the correct chatbot response..."
+            style="width:100%; padding:10px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;"></textarea>
+
+            <!-- CATEGORY DROPDOWN -->
+            <label>Category</label>
+            <select id="faqCategory"
+            onchange="toggleOtherCategory()"
+            style="width:100%; padding:10px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;">
+                <option value="">Select category</option>
+                <option value="Account">Account</option>
+                <option value="Loans">Loans</option>
+                <option value="Cards">Cards</option>
+                <option value="Security">Security</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <!-- CATEGORY TEXT INPUT (hidden unless "Other" selected) -->
+            <div id="otherCategoryBox" style="display:none;">
+                <label>Enter the category</label>
+                <input id="faqOtherCategory"
+                placeholder="Enter custom category"
+                style="width:100%; padding:10px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;">
+            </div>
+
+            <!-- BUTTONS -->
+            <div style="text-align:right; margin-top:10px;">
+                <button onclick="closeFaqModal()" class="btn" style="margin-right:8px;">Cancel</button>
+                <button onclick="submitFaq()" class="btn faq-primary">Add FAQ</button>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

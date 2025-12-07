@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Profile</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+</head>
+<body>
+
+<!-- Info Bar -->
+<div class="info-bar">
+    <div class="info-line">
+        📅 <span id="currentDateTime"></span>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- Balance Card -->
+    <div class="balance-card small-card">
+        <div class="balance-top">
+            <h2>Current Balance</h2>
+            <h1>₹{{ balance }}</h1>
+        </div>
+        <p class="acc-number">Account No: {{ acc }}</p>
+    </div>
+
+    <!-- Overview Cards -->
+    <div class="overview-cards small-grid">
+
+        <!-- Credits -->
+        <div class="card credit small-card">
+            <h2>Total Credits</h2>
+            <h1 class="green">₹{{ total_credit }}</h1>
+        </div>
+
+        <!-- Debits -->
+        <div class="card debit small-card">
+            <h2>Total Debits</h2>
+            <h1 class="red">₹{{ total_debit }}</h1>
+        </div>
+
+        <!-- Transaction Count -->
+        <div class="card transactions small-card">
+            <h2>Number of Transactions</h2>
+            <h1 style="color:#0b54c1;">{{ txnCount }}</h1>
+        </div>
+
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid small-main">
+
+        <!-- User Details -->
+        <div class="details-box small-box">
+            <h2>User Info</h2>
+            <p><strong>Name:</strong> {{ name }}</p>
+            <p><strong>Email:</strong> {{ email }}</p>
+            <p><strong>Phone:</strong> {{ phone }}</p>
+            <p><strong>DOB:</strong> {{ dob }}</p>
+            <p><strong>Gender:</strong> {{ gender }}</p>
+            <p><strong>Address:</strong> {{ address }}</p>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="history-box small-box">
+            <h2>Transactions</h2>
+
+            <div class="transaction-list">
+
+                {% if history %}
+                    {% for txn in history %}
+                        <div class="transaction">
+                            <div>
+                                <h3>{{ txn[0] }}</h3>
+                                <span>{{ txn[3] }} • {{ txn[4] }}</span>
+                            </div>
+
+                            {% if txn[2] == "credit" %}
+                                <p class="amount green">+ ₹{{ txn[1] }}</p>
+                            {% else %}
+                                <p class="amount red">- ₹{{ txn[1] }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="text-align:center; margin-top:20px; opacity:0.7;">
+                        No transactions found.
+                    </p>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function updateDateTime() {
+    const now = new Date();
+    const options = { 
+        weekday: 'long', year: 'numeric', month: 'long', 
+        day: 'numeric', hour: '2-digit', minute: '2-digit'
+    };
+    document.getElementById("currentDateTime").textContent =
+        now.toLocaleString("en-IN", options);
+}
+updateDateTime();
+</script>
+
+</body>
+</html>

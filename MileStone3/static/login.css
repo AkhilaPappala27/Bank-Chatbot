@@ -1,0 +1,153 @@
+/* ================================
+   GLOBAL RESET & BASE STYLES
+================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #e7f3ff, #f2f8ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* ================================
+   MAIN CARD CONTAINER
+================================ */
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  background: #ffffff;
+  padding: 40px 45px;
+  width: 500px;         /* Automatically fits both login & signup */
+  max-width: 95%;
+  border-radius: 12px;
+  box-shadow: 0px 10px 30px rgba(0, 30, 80, 0.12);
+  text-align: center;
+}
+
+/* ================================
+   TITLES & TEXT
+================================ */
+h2 {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0b71d9;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #5e6a77;
+  margin-bottom: 22px;
+}
+
+label {
+  display: block;
+  margin: 10px 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  color: #1d2a30;
+}
+
+/* ================================
+   INPUT FIELDS
+================================ */
+input,
+select {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #d9e5f1;
+  background: #fafdff;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  margin-bottom: 12px;
+}
+
+input:focus,
+select:focus {
+  border-color: #0b71d9;
+  box-shadow: 0 0 6px rgba(11, 113, 217, 0.28);
+}
+
+/* ================================
+   BUTTON STYLING
+================================ */
+.btn {
+  width: 100%;
+  background: #0b71d9;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .15s ease, opacity .15s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.92;
+}
+
+/* ================================
+   LINKS & FOOTER TEXT
+================================ */
+.forgot {
+  display: block;
+  text-align: right;
+  margin-top: -5px;
+  margin-bottom: 18px;
+  font-size: 14px;
+  text-decoration: none;
+  color: #0b71d9;
+  font-weight: 500;
+}
+
+.switch {
+  margin-top: 18px;
+  font-size: 15px;
+  color: #5e6a77;
+}
+
+.switch a {
+  color: #0b71d9;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ================================
+   GRID (FOR SIGNUP EXTRA FIELDS)
+================================ */
+.row {
+  display: flex;
+  gap: 15px;
+}
+
+.row .half {
+  width: 100%;
+}
+
+.error-msg {
+    color: #ff2b2b;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-align: center;
+}
+

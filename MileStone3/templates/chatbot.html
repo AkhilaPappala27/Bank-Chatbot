@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bank Chatbot</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- CSS from static folder -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='chatbot.css') }}">
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+
+</head>
+<body>
+    <div class="chat-container">
+        <h2>🏦 My Bank Chatbot</h2>
+        <div id="chat-box" class="chat-box"></div>
+
+        <form id="chat-form">
+            <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" required>
+            <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+    </div>
+
+    <!-- JS -->
+    <script>
+        const chatForm = document.getElementById('chat-form');
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // Add user bubble
+            chatBox.innerHTML += `<div class="user">${message}</div>`;
+            userInput.value = '';
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const response = await fetch('/get', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ message })
+                });
+
+                const data = await response.json();
+
+                // Remove anything inside (…) → intent labels
+                let cleanResponse = data.response.replace(/\(.*?\)/g, "").trim();
+
+                // Add bot bubble
+                chatBox.innerHTML += `<div class="bot">${cleanResponse}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+            } catch (err) {
+                chatBox.innerHTML += `<div class="bot">⚠️ Error. Try again.</div>`;
+            }
+        });
+    </script>
+
+
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My Bank Chatbot - Sign Up</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='signup.css') }}" />
+</head>
+
+<body>
+  <main class="page">
+    <form class="signup-card" method="POST" action="{{ url_for('signup') }}" autocomplete="off" novalidate>
+
+      <header class="card-header">
+        <h1 class="brand">My Bank Chatbot</h1>
+        <p class="lead">Create your account to get started</p>
+      </header>
+
+      <!-- ====================== FORM GRID ====================== -->
+      <section class="form-grid">
+
+        <!-- Account Number -->
+        <div class="col">
+          <label for="accountNumber">Account Number</label>
+          <input id="accountNumber" name="accountNumber" type="text" placeholder="Enter your Account Number" required />
+        </div>
+
+        <!-- Current Balance -->
+        <div class="col">
+          <label for="currentBalance">Current Balance</label>
+          <input id="currentBalance" name="currentBalance" type="number" placeholder="Enter your Current Balance" required />
+        </div>
+
+        <!-- Account Holder Name -->
+        <div class="full">
+          <label for="accountName">Account Holder Name</label>
+          <input id="accountName" name="accountName" type="text" placeholder="Enter your Account Number" required />
+        </div>
+
+        <!-- Email -->
+        <div class="full">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="Enter your Email" required />
+        </div>
+
+        <!-- Phone -->
+        <div class="full">
+          <label for="phone">Phone Number</label>
+          <input id="phone" name="phone" type="tel" placeholder="Enter your Phone Number" required />
+        </div>
+
+        <!-- Address -->
+        <div class="full">
+          <label for="address">Address</label>
+          <input id="address" name="address" type="text" placeholder="Enter your full address" required />
+        </div>
+
+        <!-- Date of Birth -->
+        <div class="col">
+          <label for="dob">Date of Birth</label>
+          <input id="dob" name="dob" type="date" required />
+        </div>
+
+        <!-- Gender -->
+        <div class="col">
+          <label for="gender">Gender</label>
+          <select id="gender" name="gender" required>
+            <option value="">Select gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <!-- Previous Transaction Amount -->
+        <div class="col">
+          <label for="prevTxn">Previous Transaction Amount</label>
+          <input id="prevTxn" name="prevTxn" type="number" placeholder="Enter Amount" required />
+        </div>
+
+        <!-- Transaction Type -->
+        <div class="col">
+          <label for="txnType">Transaction Type</label>
+          <select id="txnType" name="txnType" required>
+            <option value="">Select type</option>
+            <option value="credit">Credited</option>
+            <option value="debit">Debited</option>
+          </select>
+        </div>
+
+        <!-- Last Transaction Date -->
+        <div class="col">
+          <label for="lastTxnDate">Last Transaction Date</label>
+          <input id="lastTxnDate" name="lastTxnDate" type="date" required />
+        </div>
+
+        <!-- Last Transaction Time -->
+        <div class="col">
+          <label for="lastTxnTime">Last Transaction Time</label>
+          <input id="lastTxnTime" name="lastTxnTime" type="time" required />
+        </div>
+
+        <!-- Receiver Name -->
+        <div class="col">
+          <label for="receiverName">Receiver Name</label>
+          <input id="receiverName" name="receiverName" placeholder="Enter Name" type="text" required />
+        </div>
+
+        <!-- Receiver Account Number -->
+        <div class="col">
+          <label for="receiverAcc">Receiver Account Number</label>
+          <input id="receiverAcc" name="receiverAcc" type="text" placeholder="Enter Account Number" required/>
+        </div>
+
+        <!-- Password -->
+        <div class="col">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" required />
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="col">
+          <label for="confirmPassword">Confirm Password</label>
+          <input id="confirmPassword" name="confirmPassword" type="password" required />
+        </div>
+
+      </section>
+      <!-- ================== END OF FORM GRID ================== -->
+
+      <div class="actions">
+        <button type="submit" class="btn-primary">Sign Up</button>
+      </div>
+
+      <footer class="card-footer">
+        <p>
+          Already have an account?
+          <a href="{{ url_for('login') }}">Login</a>
+        </p>
+      </footer>
+
+    </form>
+  </main>
+
+  <!-- Prevent early submission until all required fields are valid -->
+  <script src="{{ url_for('static', filename='main.js') }}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.querySelector(".signup-card");
+
+      form.addEventListener("submit", function(event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          form.reportValidity();
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

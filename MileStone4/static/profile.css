@@ -1,0 +1,178 @@
+/* GENERAL PAGE SETTINGS */
+body {
+    background: #e9f1ff;
+    padding: 5px 30px;
+    font-family: "Segoe UI", sans-serif;
+    overflow: hidden; /* No full-page scroll */
+    margin: 3px auto 80px auto;
+
+}
+/* Clean info summary bar */
+.info-bar {
+    max-width: 1100px;
+    margin: 20px auto;
+    background: #ffffff;
+    padding: 18px 25px;
+    border-radius: 14px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+/* Each line in info bar */
+.info-line {
+    font-size: 17px;
+    color: #333;
+    margin: 5px 0;
+}
+
+/* Highlight the login time */
+.info-line strong {
+    color: #0b54c1; /* same as your blue theme */
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.acc-number {
+    font-size: 16px;
+    margin-top: 5px;
+    color: #e3e9ff;  /* light blue to match card */
+    font-weight: 500;
+}
+.balance-top {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.balance-top h2 {
+    font-size: 23px;
+}
+
+.balance-top h1 {
+    font-size: 35px;
+    margin: 0;
+}
+
+/* BALANCE CARD (reduce size) */
+.balance-card {
+    background: #0b54c1;
+    color: white;
+    padding: 25px 30px;          /* reduced from 40px */
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.balance-card h2 {
+    font-size: 23px;
+}
+
+.balance-card h1 {
+    font-size: 35px;        /* reduced from 55px */
+    margin: 6px 0;
+}
+
+/* OVERVIEW CARDS */
+.overview-cards {
+    margin-top: 15px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;              /* smaller space */
+}
+
+.card {
+    background: white;
+    padding: 18px;          /* reduced */
+    border-radius: 12px;
+    text-align: center;
+}
+
+.card h2 {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.card h1 {
+    font-size: 26px;        /* slightly reduced */
+    margin-top: 8px;
+}
+
+.green { color: #00b050; font-weight: bold; }
+.red { color: #e01e37; font-weight: bold; }
+
+/* MAIN GRID */
+.main-grid {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 20px;
+}
+
+/* DETAILS BOX */
+.details-box {
+    background: white;
+    padding: 18px;          /* reduced */
+    border-radius: 12px;
+    height: 300px;          /* fixed height */
+    overflow: hidden;
+}
+
+.details-box h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.details-box p {
+    margin: 8px 0;
+    font-size: 15px;
+}
+
+/* HISTORY BOX */
+.history-box {
+    background: white;
+    padding: 18px;
+    border-radius: 12px;
+    height: 300px;          /* fixed height */
+    overflow: hidden;       /* prevent page scroll */
+}
+
+.history-box h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+/* ONLY TRANSACTION LIST SCROLLS */
+.transaction-list {
+    height: 240px;         /* inside area scrolls */
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* TRANSACTION ITEM */
+.transaction {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f0f3f7;
+    padding: 5px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.transaction h3 {
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.transaction span {
+    font-size: 14px;
+    color: #555;
+}
+
+.amount {
+    font-size: 18px;
+    font-weight: bold;
+}
